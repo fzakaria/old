@@ -1,0 +1,13 @@
+bazel
+bazel-bazel-test
+bazel-bin
+bazel-genfiles
+bazel-out
+bazel-old
+bazel-testlogs
+bazel-vagrant
+bazel-bazel-example
+.vagrant/
+Vagrantfile
+.idea/
+.vscode/
