@@ -1,9 +1,26 @@
-#include "toml.hpp"
+#include "toml++/toml.h"
 #include <link.h>
 #include <iostream>
+#include <string_view>
 
-__attribute__((constructor))
-static void init(void) {
+class Strategy
+{
+public:
+    virtual ~Strategy() {}
+    virtual std::string resolve(std::string_view name) const = 0;
+};
+
+class DoNothingStrategy : public Strategy
+{
+public:
+    std::string resolve(std::string_view name) const override
+    {
+        return std::string{name};
+    }
+};
+
+__attribute__((constructor)) static void init(void)
+{
     // Note: Cannot use print here.
 }
 
@@ -36,13 +53,85 @@ static void init(void) {
    because it could correspond to an interface that does not match
    the <link.h> definitions used to build the audit module.
 */
-unsigned int la_version(unsigned int version) {
-  // If version == 0 the library will be ignored by the linker.
-  if (version == 0) {
-    return version;
-  } 
+unsigned int la_version(unsigned int version)
+{
+    // If version == 0 the library will be ignored by the linker.
+    if (version == 0)
+    {
+        return version;
+    }
 
-  std::cout << "Hello World" << std::endl;
+    std::cout << "Hello World" << std::endl;
 
-  return LAV_CURRENT;
+    return LAV_CURRENT;
+}
+
+/*
+    The dynamic linker invokes this function to inform the auditing
+    library that it is about to search for a shared object.  The name
+    argument is the filename or pathname that is to be searched for.
+    cookie identifies the shared object that initiated the search.
+    flag is set to one of the following values:
+    LA_SER_ORIG
+           This is the original name that is being searched for.
+          Typically, this name comes from an ELF DT_NEEDED entry, or
+          is the filename argument given to dlopen(3).
+   LA_SER_LIBPATH
+          name was created using a directory specified in
+          LD_LIBRARY_PATH.
+    LA_SER_RUNPATH
+          name was created using a directory specified in an ELF
+          DT_RPATH or DT_RUNPATH list.
+   LA_SER_CONFIG
+          name was found via the ldconfig(8) cache
+          (/etc/ld.so.cache).
+   LA_SER_DEFAULT
+          name was found via a search of one of the default
+          directories.
+   LA_SER_SECURE
+          name is specific to a secure object (unused on Linux).
+   As its function result, la_objsearch() returns the pathname that
+   the dynamic linker should use for further processing.  If NULL is
+   returned, then this pathname is ignored for further processing.
+   If this audit library simply intends to monitor search paths,
+   then name should be returned.
+*/
+char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag)
+{
+
+    // If the environment variable is unset then just dont do anything.
+    // Pretty simple.
+    char *filepath = getenv("OLDAUDIT_CONFIG");
+    if (filepath == nullptr)
+    {
+        static bool once = []()
+        {
+            std::cout << "OLDAUDIT_CONFIG environment variable is not set. Skipping functionality." << std::endl;
+            return true;
+        }();
+        return (char *)name;
+    }
+
+    // TODO: Can we move this parsing to the constructor and avoid doing it repeatedly.
+    auto config = toml::parse_file(filepath);
+
+    auto strategy = DoNothingStrategy();
+    switch (flag)
+    {
+    case LA_SER_ORIG:
+    {
+        std::string new_name = strategy.resolve(name);
+        char *ptr = new char[new_name.size() + 1]; // +1 for terminating NUL
+        strcpy(ptr, new_name.c_str());
+        return ptr;
+    }
+    case LA_SER_LIBPATH:
+    case LA_SER_RUNPATH:
+    case LA_SER_DEFAULT:
+    case LA_SER_CONFIG:
+    case LA_SER_SECURE:
+        break;
+    }
+
+    return (char *)name;
 }

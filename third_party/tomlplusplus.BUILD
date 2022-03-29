@@ -1,7 +1,12 @@
 cc_library(
     name = "main",
-    hdrs = [
-        "toml.hpp"
+    hdrs = glob([
+        "include/toml++/toml.h",
+        "include/toml++/impl/*.h",
+        "include/toml++/impl/*.inl"
+    ]),
+    includes = [
+        "include/"
     ],
     visibility = ["//visibility:public"],
 )
