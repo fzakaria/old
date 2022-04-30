@@ -2,22 +2,8 @@
 #include <link.h>
 #include <iostream>
 #include <string_view>
-
-class Strategy
-{
-public:
-    virtual ~Strategy() {}
-    virtual std::string resolve(std::string_view name) const = 0;
-};
-
-class DoNothingStrategy : public Strategy
-{
-public:
-    std::string resolve(std::string_view name) const override
-    {
-        return std::string{name};
-    }
-};
+#include "src/strategy/strategy.h"
+#include "src/strategy/factory.h"
 
 __attribute__((constructor)) static void init(void)
 {
@@ -101,26 +87,31 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag)
 
     // If the environment variable is unset then just dont do anything.
     // Pretty simple.
-    char *filepath = getenv("OLDAUDIT_CONFIG");
-    if (filepath == nullptr)
+    // We can't print in the module constructor, so we chose to do so now instead
+    static toml::v3::ex::parse_result config;
+    static std::unique_ptr<Strategy> strategy;
+    static bool setup = []()
     {
-        static bool once = []()
-        {
-            std::cout << "OLDAUDIT_CONFIG environment variable is not set. Skipping functionality." << std::endl;
-            return true;
-        }();
+        char *filepath = getenv("OLDAUDIT_CONFIG");
+        if (filepath == nullptr) {
+            std::cerr << "OLDAUDIT_CONFIG environment variable is not set. Skipping functionality." << std::endl;
+            return false;
+        }
+
+        config = toml::parse_file(filepath);
+        strategy = StrategyFactory(config["strategy"].value_or("do_nothing"));
+        return true;
+    }();
+
+    if (!setup) {
         return (char *)name;
     }
 
-    // TODO: Can we move this parsing to the constructor and avoid doing it repeatedly.
-    auto config = toml::parse_file(filepath);
-
-    auto strategy = DoNothingStrategy();
     switch (flag)
     {
     case LA_SER_ORIG:
     {
-        std::string new_name = strategy.resolve(name);
+        std::string new_name = strategy->resolve(name);
         char *ptr = new char[new_name.size() + 1]; // +1 for terminating NUL
         strcpy(ptr, new_name.c_str());
         return ptr;
