@@ -19,5 +19,5 @@ std::string KeyValueStrategy::resolve(std::string_view name) const {
 
 
 bool KeyValueStrategy::is_strict() const {
-    return config["strict"].as_boolean()->value_or(false);
+    return config["strict"].value_or(false);
 }

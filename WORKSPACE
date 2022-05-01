@@ -21,3 +21,18 @@ http_archive(
     strip_prefix = "glog-0.6.0",
     urls = ["https://github.com/google/glog/archive/v0.6.0.zip"],
 )
+
+rules_python_version = "ae7a2677b3003b13d45bc9bfc25f1425bed5b407" # 0.8 release
+
+http_archive(
+    name = "rules_python",
+    sha256 = "f1c3069679395ac1c1104f28a166f06167d30d41bdb1797d154d80b511780d2e",
+    strip_prefix = "rules_python-{}".format(rules_python_version),
+    url = "https://github.com/bazelbuild/rules_python/archive/{}.zip".format(rules_python_version),
+)
+
+http_archive(
+  name = "com_google_googletest",
+  urls = ["https://github.com/google/googletest/archive/8ded48c37be09d8cc3665af1b414c5d53c0862e7.zip"],
+  strip_prefix = "googletest-8ded48c37be09d8cc3665af1b414c5d53c0862e7",
+)
