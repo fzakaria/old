@@ -4,6 +4,7 @@
 #include <string_view>
 #include "src/strategy/strategy.h"
 #include "src/strategy/factory.h"
+#include "glog/logging.h"
 
 __attribute__((constructor)) static void init(void)
 {
@@ -47,8 +48,12 @@ unsigned int la_version(unsigned int version)
         return version;
     }
 
-    std::cout << "Taking control of the linking search...." << std::endl;
+    // for simplicity, let's just log to STDERR for now
+    // we may chose to log to STDERR and files in the future
+    FLAGS_logtostderr = 1;
+    google::InitGoogleLogging("libold.so");
 
+    LOG(INFO) << "Taking control of the linking search...." ;
     return LAV_CURRENT;
 }
 

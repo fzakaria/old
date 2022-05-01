@@ -4,6 +4,6 @@ cc_binary(
     srcs = [
         "main.cpp",
     ],
-    deps = ["@tomlplusplus//:main", "//src/strategy:strategies"],
+    deps = ["@tomlplusplus//:main", "@com_github_google_glog//:glog", "//src/strategy:strategies"],
     linkopts = ["-shared"]
 )
