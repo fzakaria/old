@@ -7,5 +7,5 @@ cc_library(
     ],
     hdrs = ["strategy.h", "factory.h"],
     visibility = ["//visibility:public"],
-    deps = ["@tomlplusplus//:main"]
+    deps = ["@tomlplusplus//:main"],
 )

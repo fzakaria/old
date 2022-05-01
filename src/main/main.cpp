@@ -128,3 +128,10 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag)
 
     return (char *)name;
 }
+
+
+int main() {
+    auto p = CreateStrategy("key_value", toml::parse_file("example.toml")) ;
+    std::cout << "hello world" << std::endl;
+    return 0;
+}
