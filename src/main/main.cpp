@@ -99,7 +99,9 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag)
         }
 
         config = toml::parse_file(filepath);
-        strategy = StrategyFactory(config["strategy"].value_or("do_nothing"));
+        auto type = config["strategy"].value_or("do_nothing");
+        auto type_config = config[type].as_table();
+        strategy = CreateStrategy(type, *type_config);
         return true;
     }();
 

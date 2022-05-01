@@ -1,7 +1,11 @@
 cc_library(
     name = "strategies",
     srcs = [
+        "do_nothing.h", 
+        "key_value.h",
+        "key_value.cpp"
     ],
-    hdrs = ["do_nothing.h", "strategy.h", "factory.h"],
-    visibility = ["//visibility:public"]
+    hdrs = ["strategy.h", "factory.h"],
+    visibility = ["//visibility:public"],
+    deps = ["@tomlplusplus//:main"]
 )
