@@ -11,4 +11,5 @@ class KeyValueStrategy : public Strategy
 public:
     KeyValueStrategy(toml::v3::table config);
     std::string resolve(std::string_view name) const override;
+    bool is_strict() const;
 };
