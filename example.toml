@@ -1,1 +1,6 @@
-strategy = "do_nothing"
+strategy = "key_value"
+
+
+[key_value]
+# these need to be quoted since they have periods
+"libruby-2.7.so.2.7" = "/lib/x86_64-linux-gnu/libruby-2.7.so.2.7"

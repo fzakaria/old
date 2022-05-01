@@ -5,7 +5,7 @@
 #include <string_view>
 #include "toml++/toml.h"
 
-std::unique_ptr<Strategy> CreateStrategy(std::string_view type, const toml::v3::table & config) {
+std::unique_ptr<Strategy> CreateStrategy(std::string_view type, toml::v3::table config) {
     if (type == "do_nothing") {
        return std::make_unique<DoNothingStrategy>(); 
     }

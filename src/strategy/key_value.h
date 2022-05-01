@@ -5,7 +5,10 @@
 
 class KeyValueStrategy : public Strategy
 {
+
+    const toml::v3::table config;
+
 public:
-    KeyValueStrategy(const toml::v3::table & config);
+    KeyValueStrategy(toml::v3::table config);
     std::string resolve(std::string_view name) const override;
 };

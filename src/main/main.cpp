@@ -47,7 +47,7 @@ unsigned int la_version(unsigned int version)
         return version;
     }
 
-    std::cout << "Hello World" << std::endl;
+    std::cout << "Taking control of the linking search...." << std::endl;
 
     return LAV_CURRENT;
 }
@@ -100,8 +100,13 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag)
 
         config = toml::parse_file(filepath);
         auto type = config["strategy"].value_or("do_nothing");
-        auto type_config = config[type].as_table();
-        strategy = CreateStrategy(type, *type_config);
+        auto type_config = toml::table{};
+
+        // some configurations may not have anything in the TOML
+        if (config[type].as_table() != nullptr) {
+            type_config = *config[type].as_table();
+        }
+        strategy = CreateStrategy(type, type_config);
         return true;
     }();
 
@@ -127,11 +132,4 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag)
     }
 
     return (char *)name;
-}
-
-
-int main() {
-    auto p = CreateStrategy("key_value", toml::parse_file("example.toml")) ;
-    std::cout << "hello world" << std::endl;
-    return 0;
 }
