@@ -5,7 +5,7 @@ strategy = "key_value"
 # if strict mode is enabled, then all libraries must be included
 strict = true
 # these need to be quoted since they have periods
-"libruby-2.7.so.2.7" = "/lib/x86_64-linux-gnu/libruby-2.7.so.2.7"
+"libruby-3.0.so.3.0" = "/lib/x86_64-linux-gnu/libruby-3.0.so.3.0"
 "libc.so.6" = "/lib/x86_64-linux-gnu/libc.so.6"
 "libpthread.so.0" = "/lib/x86_64-linux-gnu/libpthread.so.0"
 "librt.so.1" = "/lib/x86_64-linux-gnu/librt.so.1"
@@ -13,3 +13,4 @@ strict = true
 "libdl.so.2" = "/lib/x86_64-linux-gnu/libdl.so.2"
 "libcrypt.so.1" = "/lib/x86_64-linux-gnu/libcrypt.so.1"
 "libm.so.6" = "/lib/x86_64-linux-gnu/libm.so.6"
+"libz.so.1" = "/lib/x86_64-linux-gnu/libz.so.1"
