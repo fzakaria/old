@@ -1,14 +1,15 @@
-#include "toml++/toml.h"
 #include <link.h>
+
 #include <iostream>
 #include <string_view>
-#include "src/strategy/strategy.h"
-#include "src/strategy/factory.h"
-#include "glog/logging.h"
 
-__attribute__((constructor)) static void init(void)
-{
-    // Note: Cannot use print here.
+#include "glog/logging.h"
+#include "src/strategy/factory.h"
+#include "src/strategy/strategy.h"
+#include "toml++/toml.h"
+
+__attribute__((constructor)) static void init(void) {
+  // Note: Cannot use print here.
 }
 
 /**
@@ -17,7 +18,7 @@ __attribute__((constructor)) static void init(void)
  * It was an amazing learning resource to build an LD_AUDIT library.
  */
 
-/* 
+/*
    unsigned int la_version(unsigned int version);
    This is the only function that must be defined by an auditing
    library: it performs the initial handshake between the dynamic
@@ -40,21 +41,19 @@ __attribute__((constructor)) static void init(void)
    because it could correspond to an interface that does not match
    the <link.h> definitions used to build the audit module.
 */
-unsigned int la_version(unsigned int version)
-{
-    // If version == 0 the library will be ignored by the linker.
-    if (version == 0)
-    {
-        return version;
-    }
+unsigned int la_version(unsigned int version) {
+  // If version == 0 the library will be ignored by the linker.
+  if (version == 0) {
+    return version;
+  }
 
-    // for simplicity, let's just log to STDERR for now
-    // we may chose to log to STDERR and files in the future
-    FLAGS_logtostderr = 1;
-    google::InitGoogleLogging("libold.so");
+  // for simplicity, let's just log to STDERR for now
+  // we may chose to log to STDERR and files in the future
+  FLAGS_logtostderr = 1;
+  google::InitGoogleLogging("libold.so");
 
-    LOG(INFO) << "Taking control of the linking search...." ;
-    return LAV_CURRENT;
+  LOG(INFO) << "Taking control of the linking search....";
+  return LAV_CURRENT;
 }
 
 /*
@@ -87,54 +86,51 @@ unsigned int la_version(unsigned int version)
    If this audit library simply intends to monitor search paths,
    then name should be returned.
 */
-char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag)
-{
-
-    // If the environment variable is unset then just dont do anything.
-    // Pretty simple.
-    // We can't print in the module constructor, so we chose to do so now instead
-    static toml::v3::ex::parse_result config;
-    static std::unique_ptr<Strategy> strategy;
-    static bool setup = []()
-    {
-        char *filepath = getenv("OLDAUDIT_CONFIG");
-        if (filepath == nullptr) {
-            std::cerr << "OLDAUDIT_CONFIG environment variable is not set. Skipping functionality." << std::endl;
-            return false;
-        }
-
-        config = toml::parse_file(filepath);
-        auto type = config["strategy"].value_or("do_nothing");
-        auto type_config = toml::table{};
-
-        // some configurations may not have anything in the TOML
-        if (config[type].as_table() != nullptr) {
-            type_config = *config[type].as_table();
-        }
-        strategy = CreateStrategy(type, type_config);
-        return true;
-    }();
-
-    if (!setup) {
-        return (char *)name;
+char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
+  // If the environment variable is unset then just dont do anything.
+  // Pretty simple.
+  // We can't print in the module constructor, so we chose to do so now instead
+  static toml::v3::ex::parse_result config;
+  static std::unique_ptr<Strategy> strategy;
+  static bool setup = []() {
+    char *filepath = getenv("OLDAUDIT_CONFIG");
+    if (filepath == nullptr) {
+      std::cerr << "OLDAUDIT_CONFIG environment variable is not set. Skipping "
+                   "functionality."
+                << std::endl;
+      return false;
     }
 
-    switch (flag)
-    {
-    case LA_SER_ORIG:
-    {
-        std::string new_name = strategy->resolve(name);
-        char *ptr = new char[new_name.size() + 1]; // +1 for terminating NUL
-        strcpy(ptr, new_name.c_str());
-        return ptr;
+    config = toml::parse_file(filepath);
+    auto type = config["strategy"].value_or("do_nothing");
+    auto type_config = toml::table{};
+
+    // some configurations may not have anything in the TOML
+    if (config[type].as_table() != nullptr) {
+      type_config = *config[type].as_table();
+    }
+    strategy = CreateStrategy(type, type_config);
+    return true;
+  }();
+
+  if (!setup) {
+    return (char *)name;
+  }
+
+  switch (flag) {
+    case LA_SER_ORIG: {
+      std::string new_name = strategy->resolve(name);
+      char *ptr = new char[new_name.size() + 1];  // +1 for terminating NUL
+      strcpy(ptr, new_name.c_str());
+      return ptr;
     }
     case LA_SER_LIBPATH:
     case LA_SER_RUNPATH:
     case LA_SER_DEFAULT:
     case LA_SER_CONFIG:
     case LA_SER_SECURE:
-        break;
-    }
+      break;
+  }
 
-    return (char *)name;
+  return (char *)name;
 }
