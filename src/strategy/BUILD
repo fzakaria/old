@@ -1,11 +1,17 @@
 cc_library(
     name = "strategies",
     srcs = [
-        "do_nothing.h", 
+        "do_nothing.h",
+        "key_value.cpp",
         "key_value.h",
-        "key_value.cpp"
     ],
-    hdrs = ["strategy.h", "factory.h"],
+    hdrs = [
+        "factory.h",
+        "strategy.h",
+    ],
     visibility = ["//visibility:public"],
-    deps = ["@tomlplusplus//:main", "@com_github_google_glog//:glog"],
+    deps = [
+        "@com_github_google_glog//:glog",
+        "@tomlplusplus//:main",
+    ],
 )

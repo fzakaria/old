@@ -2,10 +2,10 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "tomlplusplus",
-    url = "https://github.com/marzer/tomlplusplus/archive/refs/tags/v3.0.1.zip",
-    sha256 = "49b7e619a4f545c2e7fbeda36853244c36cbf85818d92953fddbec4799359c27",
     build_file = "@//third_party:tomlplusplus.BUILD",
+    sha256 = "49b7e619a4f545c2e7fbeda36853244c36cbf85818d92953fddbec4799359c27",
     strip_prefix = "tomlplusplus-3.0.1",
+    url = "https://github.com/marzer/tomlplusplus/archive/refs/tags/v3.0.1.zip",
 )
 
 http_archive(
@@ -22,7 +22,7 @@ http_archive(
     urls = ["https://github.com/google/glog/archive/v0.6.0.zip"],
 )
 
-rules_python_version = "ae7a2677b3003b13d45bc9bfc25f1425bed5b407" # 0.8 release
+rules_python_version = "ae7a2677b3003b13d45bc9bfc25f1425bed5b407"  # 0.8 release
 
 http_archive(
     name = "rules_python",
@@ -32,7 +32,7 @@ http_archive(
 )
 
 http_archive(
-  name = "com_google_googletest",
-  urls = ["https://github.com/google/googletest/archive/8ded48c37be09d8cc3665af1b414c5d53c0862e7.zip"],
-  strip_prefix = "googletest-8ded48c37be09d8cc3665af1b414c5d53c0862e7",
+    name = "com_google_googletest",
+    strip_prefix = "googletest-8ded48c37be09d8cc3665af1b414c5d53c0862e7",
+    urls = ["https://github.com/google/googletest/archive/8ded48c37be09d8cc3665af1b414c5d53c0862e7.zip"],
 )
