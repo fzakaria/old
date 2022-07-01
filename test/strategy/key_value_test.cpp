@@ -3,11 +3,10 @@
 #include <stdexcept>
 
 #include "gtest/gtest.h"
-#include "src/config/config.h"
 #include "src/config/builder.h"
+#include "src/config/config.h"
 
 TEST(KeyValueStrategyTest, StrictModeTestingEmpty) {
-
   auto config = Config::KeyValue();
   auto strategy = KeyValueStrategy(config);
   ASSERT_FALSE(strategy.is_strict());

@@ -4,11 +4,10 @@
 #include <string_view>
 
 #include "glog/logging.h"
+#include "src/config/builder.h"
+#include "src/config/config.h"
 #include "src/strategy/factory.h"
 #include "src/strategy/strategy.h"
-#include "src/config/config.h"
-#include "src/config/builder.h"
-
 #include "toml++/toml.h"
 
 __attribute__((constructor)) static void init(void) {

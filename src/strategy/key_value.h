@@ -1,8 +1,8 @@
 #include <string>
 #include <string_view>
 
-#include "strategy.h"
 #include "src/config/config.h"
+#include "strategy.h"
 
 class KeyValueStrategy : public Strategy {
   const Config::KeyValue config;

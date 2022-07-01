@@ -8,15 +8,14 @@
 KeyValueStrategy::KeyValueStrategy(Config::KeyValue config) : config(config) {}
 
 std::string KeyValueStrategy::resolve(std::string_view name) const {
-
-  auto it = config.mapping().find(std::string {name});
+  auto it = config.mapping().find(std::string{name});
 
   if (it == config.mapping().end()) {
     LOG(INFO) << "could not find replacement for [" << name << "]";
     if (this->is_strict()) {
       throw std::domain_error("Strict mode enabled, failing startup.");
     }
-    return std::string {name};
+    return std::string{name};
   }
 
   auto value = it->second;
@@ -24,6 +23,4 @@ std::string KeyValueStrategy::resolve(std::string_view name) const {
   return value;
 };
 
-bool KeyValueStrategy::is_strict() const {
-  return config.is_strict();
-}
+bool KeyValueStrategy::is_strict() const { return config.is_strict(); }

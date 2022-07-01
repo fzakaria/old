@@ -3,8 +3,8 @@
 
 #include "do_nothing.h"
 #include "key_value.h"
-#include "strategy.h"
 #include "src/config/config.h"
+#include "strategy.h"
 
 std::unique_ptr<Strategy> CreateStrategy(Config config) {
   if (config.strategy() == Config::Strategy::DoNothing) {
@@ -16,6 +16,7 @@ std::unique_ptr<Strategy> CreateStrategy(Config config) {
   }
 
   // default case
-  std::cerr << "Unknown strategy type. Defaulting to do_nothing strategy." << std::endl;
+  std::cerr << "Unknown strategy type. Defaulting to do_nothing strategy."
+            << std::endl;
   return std::make_unique<DoNothingStrategy>();
 }
