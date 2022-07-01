@@ -11,3 +11,4 @@ bazel-bazel-example
 Vagrantfile
 .idea/
 .vscode/
+examples/**/*.so
