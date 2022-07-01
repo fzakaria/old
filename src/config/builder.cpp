@@ -45,8 +45,7 @@ KeyValueBuilder::KeyValueBuilder(toml::v3::table config) {
   }
 }
 
-KeyValueBuilder& KeyValueBuilder::with(std::string key,
-                                       std::filesystem::path value) {
+KeyValueBuilder& KeyValueBuilder::with(std::string key, std::string value) {
   key_value._mapping.insert({key, value});
   return *this;
 }

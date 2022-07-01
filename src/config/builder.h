@@ -1,6 +1,5 @@
 #pragma once
 
-#include <filesystem>
 #include <utility>
 
 #include "config.h"
@@ -12,7 +11,7 @@ class KeyValueBuilder {
   KeyValueBuilder() {}
   KeyValueBuilder(toml::v3::table config);
   operator Config::KeyValue() const { return std::move(key_value); }
-  KeyValueBuilder& with(std::string key, std::filesystem::path value);
+  KeyValueBuilder& with(std::string key, std::string value);
   KeyValueBuilder& strict(bool value);
 };
 

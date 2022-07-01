@@ -1,5 +1,6 @@
 #include <link.h>
 
+#include <filesystem>
 #include <iostream>
 #include <string_view>
 
@@ -9,6 +10,13 @@
 #include "src/strategy/factory.h"
 #include "src/strategy/strategy.h"
 #include "toml++/toml.h"
+
+static KeyValueBuilder key_value_builder;
+
+void atexit_handler() {
+  Config config = Config::build().key_value(key_value_builder);
+  std::cout << config << std::endl;
+}
 
 __attribute__((constructor)) static void init(void) {
   // Note: Cannot use print here.
@@ -95,6 +103,11 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
   static std::unique_ptr<Strategy> strategy;
   static Config config;
   static bool setup = []() {
+    // We register this here because it must be called after the initialization
+    // of our static variables. Unfortunately __attribute constructor() is
+    // called before oddly.
+    std::atexit(atexit_handler);
+
     char *filepath = getenv("OLDAUDIT_CONFIG");
     if (filepath == nullptr) {
       std::cerr << "OLDAUDIT_CONFIG environment variable is not set. Skipping "
@@ -162,5 +175,11 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
 unsigned int la_objopen(struct link_map *map, Lmid_t lmid, uintptr_t *cookie) {
   // TODO: Remove when we add the Audit flag
   LOG(INFO) << "Loaded: " << std::string(map->l_name);
+
+  if (strlen(map->l_name) != 0) {
+    key_value_builder.with(std::filesystem::path(map->l_name).filename(),
+                           map->l_name);
+  }
+
   return LA_FLG_BINDTO | LA_FLG_BINDFROM;
 }
