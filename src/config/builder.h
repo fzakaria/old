@@ -5,18 +5,18 @@
 
 #include "config.h"
 #include "toml++/toml.h"
+class KeyValueBuilder {
+Config::KeyValue key_value;
+
+public:
+KeyValueBuilder() {}
+KeyValueBuilder(toml::v3::table config);
+operator Config::KeyValue() const { return std::move(key_value); }
+KeyValueBuilder& with(std::string key, std::filesystem::path value);
+KeyValueBuilder& strict(bool value);
+};
 
 class ConfigBuilder {
- public:
-  class KeyValueBuilder {
-    Config::KeyValue key_value;
-
-   public:
-    operator Config::KeyValue() const { return std::move(key_value); }
-    KeyValueBuilder& with(std::string key, std::filesystem::path value);
-    KeyValueBuilder& strict(bool value);
-  };
-
  private:
   Config config;
 

@@ -6,6 +6,7 @@
 #include "toml++/toml.h"
 
 class ConfigBuilder;
+class KeyValueBuilder;
 
 /**
  * @brief A single Config object that holds all the various types of
@@ -18,14 +19,15 @@ class Config {
 
   class KeyValue {
     std::unordered_map<std::string, std::filesystem::path> _mapping;
-    bool _strict;
+    bool _strict = false;
 
    public:
-    friend class ConfigBuilder;
+    friend class KeyValueBuilder;
     const std::unordered_map<std::string, std::filesystem::path>& mapping()
         const {
       return _mapping;
     }
+    static KeyValueBuilder fromTOML(toml::v3::table config);
     bool is_strict() const { return _strict; }
   };
 

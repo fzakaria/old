@@ -15,23 +15,9 @@ ConfigBuilder::ConfigBuilder(toml::v3::table config) {
   auto type = fromString(type_str);
   strategy(type);
 
-  auto type_config = config[type_str].as_table();
-
-  if (type == Config::Strategy::KeyValue) {
-    ConfigBuilder::KeyValueBuilder key_value_builder =
-        ConfigBuilder::KeyValueBuilder().strict(
-            config["strict"].value_or(false));
-    for (auto it = type_config->begin(); it != type_config->end(); it++) {
-      if (it->first == "strict") {
-        continue;
-      }
-      if (!it->second.is_string()) {
-        continue;
-      }
-      auto value = it->second.value<std::string>().value();
-      key_value_builder.with(std::string{it->first.str()}, value);
-    }
-    key_value(key_value_builder);
+  auto key_value_config = config["key_value"].as_table();
+  if (key_value_config != nullptr) {
+    key_value(Config::KeyValue::fromTOML(*key_value_config));
   }
 }
 
@@ -45,14 +31,27 @@ ConfigBuilder& ConfigBuilder::key_value(Config::KeyValue key_value) {
   return *this;
 }
 
-ConfigBuilder::KeyValueBuilder& ConfigBuilder::KeyValueBuilder::with(
+KeyValueBuilder::KeyValueBuilder(toml::v3::table config) {
+    strict(config["strict"].value_or(false));
+    for (auto it = config.begin(); it != config.end(); it++) {
+      if (it->first == "strict") {
+        continue;
+      }
+      if (!it->second.is_string()) {
+        continue;
+      }
+      auto value = it->second.value<std::string>().value();
+      with(std::string{it->first.str()}, value);
+    }
+}
+
+KeyValueBuilder& KeyValueBuilder::with(
     std::string key, std::filesystem::path value) {
   key_value._mapping.insert({key, value});
   return *this;
 }
 
-ConfigBuilder::KeyValueBuilder& ConfigBuilder::KeyValueBuilder::strict(
-    bool value) {
+KeyValueBuilder& KeyValueBuilder::strict(bool value) {
   key_value._strict = value;
   return *this;
 }
