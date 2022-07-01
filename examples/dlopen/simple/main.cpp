@@ -9,7 +9,7 @@ int main() {
     cout << "C++ dlopen demo\n\n";
 
     // open the library
-    cout << "Opening hello.so...\n";
+    cout << "Opening libhello.so...\n";
     void* handle = dlopen("libhello.so", RTLD_LAZY);
     
     if (!handle) {
