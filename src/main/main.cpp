@@ -15,7 +15,7 @@ static KeyValueBuilder key_value_builder;
 
 void atexit_handler() {
   Config config = Config::build().key_value(key_value_builder);
-  std::cout << config << std::endl;
+  LOG(INFO) << std::endl << config;
 }
 
 __attribute__((constructor)) static void init(void) {
