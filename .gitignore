@@ -12,3 +12,4 @@ Vagrantfile
 .idea/
 .vscode/
 examples/**/*.so
+examples/**/main
