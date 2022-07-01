@@ -68,7 +68,7 @@ This repository uses [bazel](https://docs.bazel.build/) as the build system; som
 
 Once you have bazel installed, building the shared object is done as follows.
 ```console
-$ bazel build src/main:old
+$ bazel build src/main:libold.so
 ```
 
 You can then run the built binary with the example TOML file provided by setting the necessary environment variables.

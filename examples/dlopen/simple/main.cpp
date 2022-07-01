@@ -10,7 +10,7 @@ int main() {
 
     // open the library
     cout << "Opening hello.so...\n";
-    void* handle = dlopen("./libhello.so", RTLD_LAZY);
+    void* handle = dlopen("libhello.so", RTLD_LAZY);
     
     if (!handle) {
         cerr << "Cannot open library: " << dlerror() << '\n';
