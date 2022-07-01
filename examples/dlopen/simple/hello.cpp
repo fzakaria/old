@@ -1,6 +1,4 @@
 
 #include <iostream>
 
-extern "C" void hello() {
-    std::cout << "hello" << '\n';
-}
+extern "C" void hello() { std::cout << "hello" << '\n'; }

@@ -163,7 +163,6 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
     bindings should be audited for this object.
 */
 unsigned int la_objopen(struct link_map *map, Lmid_t lmid, uintptr_t *cookie) {
-
   // TODO: Remove when we add the Audit flag
   LOG(INFO) << "Loaded: " << std::string(map->l_name);
   return LA_FLG_BINDTO | LA_FLG_BINDFROM;
