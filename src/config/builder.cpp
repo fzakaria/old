@@ -32,21 +32,21 @@ ConfigBuilder& ConfigBuilder::key_value(Config::KeyValue key_value) {
 }
 
 KeyValueBuilder::KeyValueBuilder(toml::v3::table config) {
-    strict(config["strict"].value_or(false));
-    for (auto it = config.begin(); it != config.end(); it++) {
-      if (it->first == "strict") {
-        continue;
-      }
-      if (!it->second.is_string()) {
-        continue;
-      }
-      auto value = it->second.value<std::string>().value();
-      with(std::string{it->first.str()}, value);
+  strict(config["strict"].value_or(false));
+  for (auto it = config.begin(); it != config.end(); it++) {
+    if (it->first == "strict") {
+      continue;
     }
+    if (!it->second.is_string()) {
+      continue;
+    }
+    auto value = it->second.value<std::string>().value();
+    with(std::string{it->first.str()}, value);
+  }
 }
 
-KeyValueBuilder& KeyValueBuilder::with(
-    std::string key, std::filesystem::path value) {
+KeyValueBuilder& KeyValueBuilder::with(std::string key,
+                                       std::filesystem::path value) {
   key_value._mapping.insert({key, value});
   return *this;
 }

@@ -7,7 +7,7 @@
 #include "src/config/config.h"
 
 TEST(KeyValueStrategyTest, StrictModeTestingEmpty) {
-    Config config = Config::fromTOML(toml::parse(
+  Config config = Config::fromTOML(toml::parse(
       R"(
     )"));
   auto strategy = KeyValueStrategy(config.key_value());
@@ -15,7 +15,7 @@ TEST(KeyValueStrategyTest, StrictModeTestingEmpty) {
 }
 
 TEST(KeyValueStrategyTest, StrictModeTestingSetFalse) {
-    Config config = Config::fromTOML(toml::parse(
+  Config config = Config::fromTOML(toml::parse(
       R"(
       [key_value]
       strict = false
@@ -25,7 +25,7 @@ TEST(KeyValueStrategyTest, StrictModeTestingSetFalse) {
 }
 
 TEST(KeyValueStrategyTest, StrictModeTestingSetTrue) {
-    Config config = Config::fromTOML(toml::parse(
+  Config config = Config::fromTOML(toml::parse(
       R"(
       [key_value]
       strict = true
@@ -70,7 +70,8 @@ TEST(KeyValueStrategyTest, ReplaceEmptyStrict) {
 
 TEST(KeyValueStrategyTest, ReplaceSimple) {
   auto name = "libruby-2.7.so.2.7";
-  auto config = KeyValueBuilder().with("libruby-2.7.so.2.7", "/lib/x86_64-linux-gnu/libruby-2.7.so.2.7");
+  auto config = KeyValueBuilder().with(
+      "libruby-2.7.so.2.7", "/lib/x86_64-linux-gnu/libruby-2.7.so.2.7");
   auto strategy = KeyValueStrategy(config);
   ASSERT_EQ(strategy.resolve(name), "/lib/x86_64-linux-gnu/libruby-2.7.so.2.7");
 }
@@ -82,7 +83,7 @@ TEST(KeyValueStrategyTest, ReplaceWrongType) {
       [key_value]
       "libruby-2.7.so.2.7" = 123
     )"));
-    std::cout << "Farid: " << config.key_value().is_strict() << std::endl;
+  std::cout << "Farid: " << config.key_value().is_strict() << std::endl;
   auto strategy = KeyValueStrategy(config.key_value());
   ASSERT_EQ(strategy.resolve(name), name);
 }
