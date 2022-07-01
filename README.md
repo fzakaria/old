@@ -62,6 +62,59 @@ Usage: ruby [switches] [--] [programfile] [arguments]
 
 If you want to explore other strategies take a look at [example.toml](example.toml).
 
+## Auditing
+
+Oftentimes, binaries require more libraries than what is specifically required in the _DT_NEEDED_ section.
+Let's use `ruby` as an example.
+
+Here we can see what is required by the binary itself; there are 11 libraries.
+```console
+$ ldd $(which ruby)
+	linux-vdso.so.1 (0x00007ffc5eb93000)
+	/lib/x86_64-linux-gnu/libnss_cache.so.2 (0x00007f8b68788000)
+	libruby-3.0.so.3.0 => /lib/x86_64-linux-gnu/libruby-3.0.so.3.0 (0x00007f8b683f3000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f8b6821a000)
+	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007f8b681fd000)
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f8b681dc000)
+	librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007f8b681d0000)
+	libgmp.so.10 => /lib/x86_64-linux-gnu/libgmp.so.10 (0x00007f8b6814f000)
+	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007f8b68149000)
+	libcrypt.so.1 => /lib/x86_64-linux-gnu/libcrypt.so.1 (0x00007f8b6810e000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f8b67fca000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f8b68796000)
+```
+
+We can run `ruby` using this _LD_AUDIT_ tool to capture all other dynamically needed libaries so that we can also
+include them in our key-value map, therefore, speeding up builds.
+
+```console
+❯ LD_AUDIT=./bazel-bin/src/main/libold.so ruby -e "puts 'hi'"
+.. prune for brevity ...
+hi
+I20220701 21:54:58.348860 1715429 main.cpp:18] Profiled the following libraries which were loaded
+strategy = 'key_value'
+
+[key_value]
+'encdb.so' = '/usr/lib/x86_64-linux-gnu/ruby/3.0.0/enc/encdb.so'
+'ld-linux-x86-64.so.2' = '/lib64/ld-linux-x86-64.so.2'
+'libc.so.6' = '/lib/x86_64-linux-gnu/libc.so.6'
+'libcrypt.so.1' = '/lib/x86_64-linux-gnu/libcrypt.so.1'
+'libdl.so.2' = '/lib/x86_64-linux-gnu/libdl.so.2'
+'libgmp.so.10' = '/lib/x86_64-linux-gnu/libgmp.so.10'
+'libm.so.6' = '/lib/x86_64-linux-gnu/libm.so.6'
+'libnss_cache.so.2' = '/lib/x86_64-linux-gnu/libnss_cache.so.2'
+'libpthread.so.0' = '/lib/x86_64-linux-gnu/libpthread.so.0'
+'librt.so.1' = '/lib/x86_64-linux-gnu/librt.so.1'
+'libruby-3.0.so.3.0' = '/lib/x86_64-linux-gnu/libruby-3.0.so.3.0'
+'libz.so.1' = '/lib/x86_64-linux-gnu/libz.so.1'
+'monitor.so' = '/usr/lib/x86_64-linux-gnu/ruby/3.0.0/monitor.so'
+strict = false
+'transdb.so' = '/usr/lib/x86_64-linux-gnu/ruby/3.0.0/enc/trans/transdb.so'
+```
+
+We now have a much more exhaustive list of libraries that were needed by the application which we can include.
+The tool generously provides the required TOML file necessary for the configuration to use on subsequent runs.
+
 ## Development
 
 This repository uses [bazel](https://docs.bazel.build/) as the build system; some familiarity is required.

@@ -3,7 +3,7 @@ strategy = "key_value"
 
 [key_value]
 # if strict mode is enabled, then all libraries must be included
-strict = true
+strict = false
 # these need to be quoted since they have periods
 "libruby-3.0.so.3.0" = "/lib/x86_64-linux-gnu/libruby-3.0.so.3.0"
 "libc.so.6" = "/lib/x86_64-linux-gnu/libc.so.6"
