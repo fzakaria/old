@@ -5,20 +5,25 @@
 
 #include "glog/logging.h"
 
-KeyValueStrategy::KeyValueStrategy(toml::v3::table config) : config(config) {}
+KeyValueStrategy::KeyValueStrategy(Config::KeyValue config) : config(config) {}
 
 std::string KeyValueStrategy::resolve(std::string_view name) const {
-  if (!this->config.contains(name) || !this->config[name].is_string()) {
+
+  auto it = config.mapping().find(std::string {name});
+
+  if (it == config.mapping().end()) {
     LOG(INFO) << "could not find replacement for [" << name << "]";
     if (this->is_strict()) {
       throw std::domain_error("Strict mode enabled, failing startup.");
     }
+    return std::string {name};
   }
 
-  LOG(INFO) << "replacing [" << name << "] with [" << this->config[name] << "]";
-  return this->config[name].value<std::string>().value_or(std::string{name});
+  auto value = it->second;
+  LOG(INFO) << "replacing [" << name << "] with [" << name << "]";
+  return value;
 };
 
 bool KeyValueStrategy::is_strict() const {
-  return config["strict"].value_or(false);
+  return config.is_strict();
 }

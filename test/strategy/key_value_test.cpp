@@ -3,18 +3,19 @@
 #include <stdexcept>
 
 #include "gtest/gtest.h"
-#include "toml++/toml.h"
+#include "src/config/config.h"
+#include "src/config/builder.h"
 
 TEST(KeyValueStrategyTest, StrictModeTestingEmpty) {
-  auto strategy = KeyValueStrategy(toml::table{});
+
+  auto config = Config::KeyValue();
+  auto strategy = KeyValueStrategy(config);
   ASSERT_FALSE(strategy.is_strict());
 }
 
 TEST(KeyValueStrategyTest, StrictModeTestingSetFalse) {
-  auto strategy = KeyValueStrategy(toml::parse(
-      R"(
-      strict = false
-    )"));
+  auto config = ConfigBuilder::KeyValueBuilder().strict(false);
+  auto strategy = KeyValueStrategy(config);
   ASSERT_FALSE(strategy.is_strict());
 }
 

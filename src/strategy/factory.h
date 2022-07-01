@@ -4,20 +4,18 @@
 #include "do_nothing.h"
 #include "key_value.h"
 #include "strategy.h"
-#include "toml++/toml.h"
+#include "src/config/config.h"
 
-std::unique_ptr<Strategy> CreateStrategy(std::string_view type,
-                                         toml::v3::table config) {
-  if (type == "do_nothing") {
+std::unique_ptr<Strategy> CreateStrategy(Config config) {
+  if (config.strategy() == Config::Strategy::DoNothing) {
     return std::make_unique<DoNothingStrategy>();
   }
 
-  if (type == "key_value") {
-    return std::make_unique<KeyValueStrategy>(config);
+  if (config.strategy() == Config::Strategy::KeyValue) {
+    return std::make_unique<KeyValueStrategy>(config.key_value());
   }
 
   // default case
-  std::cerr << "Unknown strategy type [" << type
-            << "]. Defaulting to do_nothing strategy." << std::endl;
+  std::cerr << "Unknown strategy type. Defaulting to do_nothing strategy." << std::endl;
   return std::make_unique<DoNothingStrategy>();
 }

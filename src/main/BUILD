@@ -7,6 +7,7 @@ cc_binary(
     linkopts = ["-shared"],
     deps = [
         "//src/strategy:strategies",
+        "//src/config:config",
         "@com_github_google_glog//:glog",
         "@tomlplusplus//:main",
     ],

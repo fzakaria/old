@@ -6,6 +6,9 @@
 #include "glog/logging.h"
 #include "src/strategy/factory.h"
 #include "src/strategy/strategy.h"
+#include "src/config/config.h"
+#include "src/config/builder.h"
+
 #include "toml++/toml.h"
 
 __attribute__((constructor)) static void init(void) {
@@ -90,8 +93,8 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
   // If the environment variable is unset then just dont do anything.
   // Pretty simple.
   // We can't print in the module constructor, so we chose to do so now instead
-  static toml::v3::ex::parse_result config;
   static std::unique_ptr<Strategy> strategy;
+  static Config config;
   static bool setup = []() {
     char *filepath = getenv("OLDAUDIT_CONFIG");
     if (filepath == nullptr) {
@@ -101,15 +104,10 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
       return false;
     }
 
-    config = toml::parse_file(filepath);
-    auto type = config["strategy"].value_or("do_nothing");
-    auto type_config = toml::table{};
+    auto table = toml::parse_file(filepath);
+    config = Config::fromTOML(table);
 
-    // some configurations may not have anything in the TOML
-    if (config[type].as_table() != nullptr) {
-      type_config = *config[type].as_table();
-    }
-    strategy = CreateStrategy(type, type_config);
+    strategy = CreateStrategy(config);
     return true;
   }();
 

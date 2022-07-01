@@ -11,7 +11,7 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
+        "//src/config:config",
         "@com_github_google_glog//:glog",
-        "@tomlplusplus//:main",
     ],
 )
