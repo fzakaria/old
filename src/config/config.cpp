@@ -14,7 +14,7 @@ static std::string toString(Config::Strategy strategy) {
 }
 
 ConfigBuilder Config::fromTOML(toml::v3::table config) {
-  return ConfigBuilder{config};
+  return ConfigBuilder{std::move(config)};
 }
 
 toml::v3::table Config::asTOML() const {
@@ -30,7 +30,7 @@ std::ostream& operator<<(std::ostream& os, const Config& obj) {
 ConfigBuilder Config::build() { return ConfigBuilder{toml::v3::table()}; }
 
 KeyValueBuilder Config::KeyValue::fromTOML(toml::v3::table config) {
-  return KeyValueBuilder{config};
+  return KeyValueBuilder{std::move(config)};
 }
 
 toml::v3::table Config::KeyValue::asTOML() const {

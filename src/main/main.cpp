@@ -19,7 +19,7 @@ void atexit_handler() {
             << config;
 }
 
-__attribute__((constructor)) static void init(void) {
+__attribute__((constructor)) static void init() {
   // Note: Cannot use print here.
 }
 
@@ -125,7 +125,7 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
   }();
 
   if (!setup) {
-    return (char *)name;
+    return const_cast<char *>(name);
   }
 
   switch (flag) {
@@ -143,7 +143,7 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
       break;
   }
 
-  return (char *)name;
+  return const_cast<char *>(name);
 }
 
 /*
@@ -174,7 +174,7 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
     bindings should be audited for this object.
 */
 unsigned int la_objopen(struct link_map *map, Lmid_t lmid, uintptr_t *cookie) {
-  // TODO: Remove when we add the Audit flag
+  // TODO(fmzakari): Remove when we add the Audit flag
   LOG(INFO) << "Loaded: " << std::string(map->l_name);
 
   if (strlen(map->l_name) != 0) {

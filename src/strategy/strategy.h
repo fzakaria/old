@@ -5,6 +5,6 @@
 
 class Strategy {
  public:
-  virtual ~Strategy() {}
+  virtual ~Strategy() = default;
   virtual std::string resolve(std::string_view name) const = 0;
 };

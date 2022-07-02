@@ -1,6 +1,6 @@
 #include "builder.h"
 
-static Config::Strategy fromString(std::string value) {
+static Config::Strategy fromString(const std::string & value) {
   if (value == "do_nothing") {
     return Config::Strategy::DoNothing;
   }
@@ -11,11 +11,11 @@ static Config::Strategy fromString(std::string value) {
 }
 
 ConfigBuilder::ConfigBuilder(toml::v3::table config) {
-  auto type_str = config["strategy"].value_or("do_nothing");
+  const auto *type_str = config["strategy"].value_or("do_nothing");
   auto type = fromString(type_str);
   strategy(type);
 
-  auto key_value_config = config["key_value"].as_table();
+  auto *key_value_config = config["key_value"].as_table();
   if (key_value_config != nullptr) {
     key_value(Config::KeyValue::fromTOML(*key_value_config));
   }
@@ -27,25 +27,25 @@ ConfigBuilder& ConfigBuilder::strategy(Config::Strategy strategy) {
 }
 
 ConfigBuilder& ConfigBuilder::key_value(Config::KeyValue key_value) {
-  config._key_value = key_value;
+  config._key_value = std::move(key_value);
   return *this;
 }
 
 KeyValueBuilder::KeyValueBuilder(toml::v3::table config) {
   strict(config["strict"].value_or(false));
-  for (auto it = config.begin(); it != config.end(); it++) {
-    if (it->first == "strict") {
+  for (auto && [key, value] : config) {
+    if (key == "strict") {
       continue;
     }
-    if (!it->second.is_string()) {
+    if (!value.is_string()) {
       continue;
     }
-    auto value = it->second.value<std::string>().value();
-    with(std::string{it->first.str()}, value);
+    auto path = value.value<std::string>().value();
+    with(std::string{key.str()}, path);
   }
 }
 
-KeyValueBuilder& KeyValueBuilder::with(std::string key, std::string value) {
+KeyValueBuilder& KeyValueBuilder::with(const std::string & key, const std::string & value) {
   key_value._mapping.insert({key, value});
   return *this;
 }

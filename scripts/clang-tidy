@@ -1,0 +1,14 @@
+#!/bin/sh
+
+execution_root=$(bazel info execution_root) || exit
+bazel_bin=$(bazel info bazel-bin) || exit
+
+clang-tidy \
+  src/**/*.cpp \
+  -extra-arg=-std=c++17 \
+  -- \
+    -I "${execution_root}/external/tomlplusplus/include" \
+    -I "${bazel_bin}/external/com_github_gflags_gflags/_virtual_includes/gflags" \
+    -I "${bazel_bin}/external/com_github_google_glog/src" \
+    -I "${execution_root}/external/com_github_google_glog/src" \
+    -I .
