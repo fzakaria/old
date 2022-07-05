@@ -1,6 +1,6 @@
 # old
 
-![main brabcg](https://github.com/fzakaria/old/actions/workflows/actions.yml/badge.svg)
+![main branch](https://github.com/fzakaria/old/actions/workflows/actions.yml/badge.svg)
 
 > The Other Dynamic Linker
 
@@ -120,6 +120,7 @@ The tool generously provides the required TOML file necessary for the configurat
 This repository uses [bazel](https://docs.bazel.build/) as the build system; some familiarity is required.
 
 Once you have bazel installed, building the shared object is done as follows.
+
 ```console
 $ bazel build src/main:libold.so
 ```
@@ -129,3 +130,33 @@ You can then run the built binary with the example TOML file provided by setting
 ```console
 $ OLDAUDIT_CONFIG=./example.toml LD_AUDIT=./bazel-bin/src/main/libold.so ruby --help | head
 ```
+
+### Docker
+
+If you want to develop using a Docker container,  we provide a [Dockerfile](Dockerfile)
+with bazel ready to go! First, build the container:
+
+```bash
+$ docker build -t old .
+```
+
+You can then shell inside to use old:
+
+```bash
+$ docker run -it old
+```
+```bash
+$ apt-get install -y ruby
+$ LD_AUDIT=./bazel-bin/src/main/libold.so ruby -e "puts 'hi'"
+$ OLDAUDIT_CONFIG=./example.toml LD_AUDIT=./bazel-bin/src/main/libold.so ruby --help | head
+```
+
+or bind the present working directory (with the source code) to `/code`
+to work locally and build in the container:
+
+```bash
+$ docker run -it -v $PWD:/code old
+$ bazel build src/main:libold.so
+```
+
+Have fun!
