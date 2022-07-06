@@ -129,3 +129,24 @@ You can then run the built binary with the example TOML file provided by setting
 ```console
 $ OLDAUDIT_CONFIG=./example.toml LD_AUDIT=./bazel-bin/src/main/libold.so ruby --help | head
 ```
+
+### Nix
+
+You can get all the needed dependencies via [Nix](https://nixos.org).
+You can quickly just build the binary with Nix
+```console
+$ nix build .#old
+$ ls result/bin
+libold.so
+```
+
+You can also start up a Nix development shell and have all the dependencies provided.
+```console
+$ nix develop
+nix develop
+warning: Git tree '/usr/local/google/home/fmzakari/code/github.com/fzakaria/old' is dirty
+$ which bazel
+/nix/store/hzmmgvs3hknwwaxansd984c8gjkwyjgv-bazel-3.7.2/bin/bazel
+$ which clang
+/nix/store/8jl4ks1m051dafvl7lcdmwjsl63k5xck-clang-wrapper-7.1.0/bin/clang
+```

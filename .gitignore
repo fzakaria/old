@@ -13,3 +13,4 @@ Vagrantfile
 .vscode/
 examples/**/*.so
 examples/**/main
+result
