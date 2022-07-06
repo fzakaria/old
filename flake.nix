@@ -19,11 +19,12 @@
           old = pkgs.old;
         };
 
-        checks = {
-        };
+        checks = { };
 
         defaultPackage = pkgs.old;
 
-        devShell = pkgs.old;
- });
+        devShell = pkgs.mkShell {
+          inputsFrom = [ pkgs.old ];
+        };
+      });
 }
