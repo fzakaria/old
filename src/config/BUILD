@@ -1,12 +1,12 @@
 cc_library(
     name = "config",
     srcs = [
+        "builder.cpp",
         "config.cpp",
-        "builder.cpp"
     ],
     hdrs = [
-        "config.h",
         "builder.h",
+        "config.h",
     ],
     visibility = ["//visibility:public"],
     deps = [

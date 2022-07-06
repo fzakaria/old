@@ -14,5 +14,8 @@ cc_binary(
     srcs = [
         "main.cpp",
     ],
-    linkopts = ["-ldl", "-Wl,-rpath,$$ORIGIN"],
+    linkopts = [
+        "-ldl",
+        "-Wl,-rpath,$$ORIGIN",
+    ],
 )
