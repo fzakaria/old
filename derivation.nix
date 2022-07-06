@@ -4,7 +4,7 @@
 , clang
 }:
 buildBazelPackage {
-  name = "old";
+  name = "libold.so";
   # https://nix.dev/anti-patterns/language#reproducibility-referencing-top-level-directory-with
   src = builtins.path { path = ./.; name = "old-source"; };
   buildInputs = [ bazel clang ];
