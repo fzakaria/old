@@ -1,6 +1,9 @@
 # old
 
-![main brabcg](https://github.com/fzakaria/old/actions/workflows/actions.yml/badge.svg)
+![main branch](https://github.com/fzakaria/old/actions/workflows/actions.yml/badge.svg)
+
+[![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
+
 
 > The Other Dynamic Linker
 
@@ -32,6 +35,11 @@ strict = true
 ```
 
 We can now invoke any binary that has glibc dynamic linker in the interpreter section of the binary and specify _LD_AUDIT_ environment variable.
+
+> You can easily get started and try the example by using [Nix](https://nixos.org).
+>
+> `LD_AUDIT=$(nix build github:fzakaria/old --no-link --json | jq -r ".[].outputs.out")/bin/libold.so ruby -e "puts 'hi'"
+`
 
 ```console
 $ OLDAUDIT_CONFIG=./example.toml LD_AUDIT=./bazel-bin/src/main/libold.so ruby --help | head
