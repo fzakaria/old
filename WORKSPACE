@@ -1,6 +1,14 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "sqlite",
+    build_file = "//third_party:sqlite.BUILD",
+    sha256 = "f2ce17bca51b376de4fcb9d0dc174c52f472a34c29aa1ccc774f27467cc63ed7",
+    strip_prefix = "sqlite-amalgamation-3390100",
+    url = "https://www.sqlite.org/2022/sqlite-amalgamation-3390100.zip",
+)
+
+http_archive(
     name = "tomlplusplus",
     build_file = "@//third_party:tomlplusplus.BUILD",
     sha256 = "49b7e619a4f545c2e7fbeda36853244c36cbf85818d92953fddbec4799359c27",
