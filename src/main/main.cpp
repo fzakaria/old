@@ -11,14 +11,6 @@
 #include "src/strategy/strategy.h"
 #include "toml++/toml.h"
 
-static KeyValueBuilder key_value_builder;
-
-void atexit_handler() {
-  Config config = Config::build().strategy(Config::Strategy::KeyValue).key_value(key_value_builder);
-  LOG(INFO) << "Profiled the following libraries which were loaded" << std::endl
-            << config;
-}
-
 __attribute__((constructor)) static void init() {
   // Note: Cannot use print here.
 }
@@ -104,11 +96,6 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
   static std::unique_ptr<Strategy> strategy;
   static Config config;
   static bool setup = []() {
-    // We register this here because it must be called after the initialization
-    // of our static variables. Unfortunately __attribute constructor() is
-    // called before oddly.
-    std::atexit(atexit_handler);
-
     char *filepath = getenv("OLDAUDIT_CONFIG");
     if (filepath == nullptr) {
       std::cerr << "OLDAUDIT_CONFIG environment variable is not set. Skipping "
@@ -144,43 +131,4 @@ char *la_objsearch(const char *name, uintptr_t *cookie, unsigned int flag) {
   }
 
   return const_cast<char *>(name);
-}
-
-/*
-    The dynamic linker calls this function when a new shared object
-    is loaded.  The map argument is a pointer to a link-map structure
-    that describes the object.  The lmid field has one of the
-    following values
-    LM_ID_BASE
-          Link map is part of the initial namespace.
-    LM_ID_NEWLM
-          Link map is part of a new namespace requested via
-          dlmopen(3).
-    cookie is a pointer to an identifier for this object.  The
-    identifier is provided to later calls to functions in the
-    auditing library in order to identify this object.  This
-    identifier is initialized to point to object's link map, but the
-    audit library can change the identifier to some other value that
-    it may prefer to use to identify the object.
-    As its return value, la_objopen() returns a bit mask created by
-    ORing zero or more of the following constants, which allow the
-    auditing library to select the objects to be monitored by
-    la_symbind*():
-    LA_FLG_BINDTO
-          Audit symbol bindings to this object.
-    LA_FLG_BINDFROM
-          Audit symbol bindings from this object.
-    A return value of 0 from la_objopen() indicates that no symbol
-    bindings should be audited for this object.
-*/
-unsigned int la_objopen(struct link_map *map, Lmid_t lmid, uintptr_t *cookie) {
-  // TODO(fmzakari): Remove when we add the Audit flag
-  LOG(INFO) << "Loaded: " << std::string(map->l_name);
-
-  if (strlen(map->l_name) != 0) {
-    key_value_builder.with(std::filesystem::path(map->l_name).filename(),
-                           map->l_name);
-  }
-
-  return LA_FLG_BINDTO | LA_FLG_BINDFROM;
 }

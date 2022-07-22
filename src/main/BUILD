@@ -12,3 +12,15 @@ cc_binary(
         "@tomlplusplus//:main",
     ],
 )
+
+cc_binary(
+    name = "libold-audit.so",
+    srcs = [
+        "audit.cpp",
+    ],
+    linkopts = ["-shared"],
+    deps = [
+        "//src/config",
+        "@com_github_google_glog//:glog",
+    ],
+)

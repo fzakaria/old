@@ -5,7 +5,8 @@
 
 #include "glog/logging.h"
 
-KeyValueStrategy::KeyValueStrategy(Config::KeyValue config) : config(std::move(config)) {}
+KeyValueStrategy::KeyValueStrategy(Config::KeyValue config)
+    : config(std::move(config)) {}
 
 std::string KeyValueStrategy::resolve(std::string_view name) const {
   auto it = config.mapping().find(std::string{name});

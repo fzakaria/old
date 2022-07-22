@@ -11,7 +11,7 @@ class KeyValueBuilder {
   KeyValueBuilder() = default;
   KeyValueBuilder(toml::v3::table config);
   operator Config::KeyValue() const { return key_value; }
-  KeyValueBuilder& with(const std::string & key, const std::string & value);
+  KeyValueBuilder& with(const std::string& key, const std::string& value);
   KeyValueBuilder& strict(bool value);
 };
 
