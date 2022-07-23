@@ -4,10 +4,8 @@ cc_binary(
     srcs = [
         "main.cpp",
     ],
-    # For LD_AUDIT, we need to be sure that all symbols are defiend
     linkopts = [
         "-shared",
-        "-Wl,-z defs",
     ],
     deps = [
         "//src/config",
@@ -22,10 +20,8 @@ cc_binary(
     srcs = [
         "audit.cpp",
     ],
-    # For LD_AUDIT, we need to be sure that all symbols are defiend
     linkopts = [
         "-shared",
-        "-Wl,-z defs",
     ],
     deps = [
         "//src/config",
@@ -38,10 +34,8 @@ cc_binary(
     srcs = [
         "histogram.cpp",
     ],
-    # For LD_AUDIT, we need to be sure that all symbols are defiend
     linkopts = [
         "-shared",
-        "-Wl,-z defs",
     ],
     deps = [
         "@com_github_google_glog//:glog",
