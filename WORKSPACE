@@ -1,5 +1,21 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+# Hedron's Compile Commands Extractor for Bazel
+# https://github.com/hedronvision/bazel-compile-commands-extractor
+http_archive(
+    name = "hedron_compile_commands",
+    sha256 = "4a1712a3319ddb97c1b215e9927787344b4fddaafc4ea166cf3095a767b02986",
+    strip_prefix = "bazel-compile-commands-extractor-a36dd55381f5bc452aa9f5392a8f8472a6270450",
+
+    # Replace the commit hash in both places (below) with the latest, rather than using the stale one here.
+    # Even better, set up Renovate and let it do the work for you (see "Suggestion: Updates" in the README).
+    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/a36dd55381f5bc452aa9f5392a8f8472a6270450.tar.gz",
+)
+
+load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
+
+hedron_compile_commands_setup()
+
 http_archive(
     name = "sqlite",
     build_file = "//third_party:sqlite.BUILD",
@@ -14,6 +30,14 @@ http_archive(
     sha256 = "49b7e619a4f545c2e7fbeda36853244c36cbf85818d92953fddbec4799359c27",
     strip_prefix = "tomlplusplus-3.0.1",
     url = "https://github.com/marzer/tomlplusplus/archive/refs/tags/v3.0.1.zip",
+)
+
+http_archive(
+    name = "lief",
+    build_file = "@//third_party:lief.BUILD",
+    sha256 = "b1c30381a258d05a9812020e7391cfd92ef0043a2d16e4d179d2c788a263b9f7",
+    strip_prefix = "LIEF-0.12.1-Linux-x86_64",
+    url = "https://github.com/lief-project/LIEF/releases/download/0.12.1/LIEF-0.12.1-Linux-x86_64.tar.gz",
 )
 
 http_archive(

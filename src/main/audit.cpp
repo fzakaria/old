@@ -9,7 +9,9 @@
 static KeyValueBuilder key_value_builder;
 
 void atexit_handler() {
-  Config config = Config::build().strategy(Config::Strategy::KeyValue).key_value(key_value_builder);
+  Config config = Config::build()
+                      .strategy(Config::Strategy::KeyValue)
+                      .key_value(key_value_builder);
   LOG(INFO) << "Profiled the following libraries which were loaded" << std::endl
             << config;
 }
@@ -53,7 +55,7 @@ unsigned int la_version(unsigned int version) {
     return version;
   }
 
-    [[maybe_unused]] static bool setup = []() {
+  [[maybe_unused]] static bool setup = []() {
     // We register this here because it must be called after the initialization
     // of our static variables. Unfortunately __attribute constructor() is
     // called before oddly.
@@ -66,7 +68,6 @@ unsigned int la_version(unsigned int version) {
     return true;
   }();
 
-  
   return LAV_CURRENT;
 }
 /*
