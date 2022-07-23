@@ -32,3 +32,19 @@ cc_binary(
         "@com_github_google_glog//:glog",
     ],
 )
+
+cc_binary(
+    name = "libold-histogram.so",
+    srcs = [
+        "histogram.cpp",
+    ],
+    # For LD_AUDIT, we need to be sure that all symbols are defiend
+    linkopts = [
+        "-shared",
+        "-Wl,-z defs",
+    ],
+    deps = [
+        "@com_github_google_glog//:glog",
+        "@lief",
+    ],
+)
