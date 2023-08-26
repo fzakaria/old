@@ -5,7 +5,7 @@
 [![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
 
 
-> The Other Dynamic Linker
+> The Other Link Editor
 
 The algorithm with which dependencies are found and selected have not changed since it's introduction in [Multics](https://en.wikipedia.org/wiki/Multics) and codifies in [SystemV ABI](http://www.sco.com/developers/devspecs/gabi41.pdf),
 
